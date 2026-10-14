@@ -1,0 +1,2957 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101216">
+  <link rel="icon" href="ders-takip.ico" type="image/x-icon">
+  <title>Ders Takip Paneli</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+      --bg: #101216;
+      --surface: #171b24;
+      --surface-raised: #202634;
+      --border: #30394a;
+      --text: #e8eaf0;
+      --muted: #9da7b8;
+      --accent: #a78bfa;
+      --accent-soft: #30294b;
+      --green: #72d6a0;
+      --sidebar: #121620;
+      --input-bg: #11151d;
+      --table-head: #202634;
+      --row-even: #191e29;
+      --row-hover: #252d3b;
+      --theme-row: #222939;
+      --section-row: #191f2b;
+      --checkbox-bg: #151b26;
+      --agenda-bg: #171d28;
+      --accent-contrast: #161121;
+      --accent-hover: #b9a4ff;
+      --topbar-bg: rgb(16 18 22 / 88%);
+      --shadow: 0 16px 42px rgb(0 0 0 / 12%);
+    }
+
+    :root[data-theme="light"] {
+      color-scheme: light;
+      --bg: #f3f5fb;
+      --surface: #ffffff;
+      --surface-raised: #f4f5fb;
+      --border: #e0e4ef;
+      --text: #20263a;
+      --muted: #70788d;
+      --accent: #6554d9;
+      --accent-soft: #eeebff;
+      --green: #16865c;
+      --sidebar: #f8f9fd;
+      --input-bg: #fff;
+      --table-head: #f1f2f8;
+      --row-even: #fafaff;
+      --row-hover: #f1efff;
+      --theme-row: #f1efff;
+      --section-row: #f8f7ff;
+      --checkbox-bg: #fff;
+      --agenda-bg: #fafaff;
+      --accent-contrast: #fff;
+      --accent-hover: #5140c2;
+      --topbar-bg: rgb(255 255 255 / 88%);
+      --shadow: 0 16px 42px rgb(39 47 76 / 7%);
+    }
+
+    :root[data-theme="ocean"] {
+      --bg: #0c1820;
+      --surface: #12232d;
+      --surface-raised: #19313e;
+      --border: #294754;
+      --text: #e2f4f7;
+      --muted: #98b7c0;
+      --accent: #4dd4c6;
+      --accent-soft: #173d42;
+      --green: #8bdfb4;
+      --sidebar: #0a141c;
+      --input-bg: #0e1d26;
+      --table-head: #19313e;
+      --row-even: #142731;
+      --row-hover: #1d3743;
+      --theme-row: #19313e;
+      --section-row: #142731;
+      --checkbox-bg: #10232d;
+      --agenda-bg: #12232d;
+      --accent-contrast: #09201f;
+      --accent-hover: #78e6db;
+      --topbar-bg: rgb(12 24 32 / 90%);
+      --shadow: 0 16px 42px rgb(0 0 0 / 18%);
+    }
+
+    :root[data-theme="forest"] {
+      --bg: #121a16;
+      --surface: #1a2720;
+      --surface-raised: #24352b;
+      --border: #344b3c;
+      --text: #e7f1e9;
+      --muted: #a1b5a5;
+      --accent: #9bd477;
+      --accent-soft: #2c432b;
+      --green: #b9e89b;
+      --sidebar: #101712;
+      --input-bg: #151f19;
+      --table-head: #24352b;
+      --row-even: #1c2a21;
+      --row-hover: #293a2e;
+      --theme-row: #24352b;
+      --section-row: #1c2a21;
+      --checkbox-bg: #17231b;
+      --agenda-bg: #1a2720;
+      --accent-contrast: #152014;
+      --accent-hover: #b1e78f;
+      --topbar-bg: rgb(18 26 22 / 90%);
+      --shadow: 0 16px 42px rgb(0 0 0 / 18%);
+    }
+
+    * { box-sizing: border-box; }
+    body { min-width: 320px; min-height: 100vh; margin: 0; }
+    button, input, select, textarea { font: inherit; }
+    button { color: inherit; }
+    button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .app-shell { min-height: 100vh; }
+    .topbar {
+      position: sticky;
+      z-index: 2;
+      top: 0;
+      display: flex;
+      min-height: 74px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 14px 30px;
+      border-bottom: 1px solid var(--border);
+      background: var(--topbar-bg);
+      backdrop-filter: blur(14px);
+    }
+
+    .topbar-actions { display: flex; align-items: center; gap: 18px; }
+    .theme-control { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: .8rem; }
+    .theme-control select { width: auto; min-width: 132px; padding: 8px 30px 8px 10px; }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand-mark {
+      display: grid;
+      width: 40px;
+      height: 40px;
+      place-items: center;
+      border-radius: 12px;
+      color: var(--accent-contrast);
+      background: var(--accent);
+      font-size: 1.1rem;
+      font-weight: 800;
+    }
+
+    .brand h1 { margin: 0; font-size: 1.1rem; }
+    .brand p { margin: 3px 0 0; color: var(--muted); font-size: .82rem; }
+    .topbar-date { color: var(--muted); font-size: .9rem; }
+
+    .layout {
+      display: grid;
+      width: min(100%, 1600px);
+      min-height: calc(100vh - 74px);
+      grid-template-columns: 255px minmax(0, 1fr);
+      margin: 0 auto;
+    }
+
+    .sidebar {
+      padding: 24px 16px;
+      border-right: 1px solid var(--border);
+      background: var(--sidebar);
+    }
+
+    .sidebar-label {
+      margin: 0 10px 10px;
+      color: var(--muted);
+      font-size: .72rem;
+      font-weight: 750;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .grade-list { display: flex; flex-wrap: wrap; gap: 8px; }
+    .grade-list > .grade-button { flex: 1 1 0; }
+    .grade-button, .subject-button {
+      width: 100%;
+      border: 0;
+      border-radius: 8px;
+      background: transparent;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .grade-button {
+      display: flex;
+      width: auto;
+      flex: 1 1 0;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 40px;
+      padding: 10px;
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .grade-button:hover, .subject-button:hover { background: var(--surface-raised); }
+    .grade-button[aria-expanded="true"] {
+      color: var(--accent);
+      background: var(--accent-soft);
+    }
+    .grade-chevron { color: var(--muted); font-size: .75rem; }
+    .subject-list { display: grid; flex: 1 0 100%; gap: 2px; padding: 2px 0 8px 10px; }
+
+    .subject-button {
+      padding: 8px 10px;
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    .subject-button[aria-current="page"] {
+      color: var(--accent);
+      background: var(--accent-soft);
+      font-weight: 650;
+    }
+
+    .agenda-nav-button {
+      width: 100%;
+      margin-top: 18px;
+      padding: 11px 12px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      color: var(--text);
+      background: var(--surface);
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .agenda-nav-button:hover, .agenda-nav-button[aria-current="page"] {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .content { min-width: 0; padding: 32px clamp(18px, 3vw, 42px) 48px; }
+    .page-heading {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+
+    .eyebrow {
+      margin: 0 0 6px;
+      color: var(--accent);
+      font-size: .75rem;
+      font-weight: 750;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    h2 { margin: 0; font-size: clamp(1.45rem, 2.5vw, 1.9rem); }
+    .heading-note { margin: 6px 0 0; color: var(--muted); }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .stat-card, .panel {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .stat-card { min-height: 105px; padding: 18px; }
+    .stat-label { color: var(--muted); font-size: .82rem; }
+    .stat-value { display: block; margin-top: 10px; font-size: 1.6rem; font-weight: 750; }
+    .stat-value small { color: var(--muted); font-size: .88rem; font-weight: 500; }
+
+    .progress-track {
+      height: 7px;
+      margin-top: 10px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: var(--border);
+    }
+
+    .progress-fill {
+      width: 0;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--accent), var(--green));
+      transition: width .2s ease;
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      align-items: start;
+      gap: 16px;
+    }
+
+    .main-column, .side-column { display: grid; gap: 16px; min-width: 0; }
+    .panel { padding: 20px; }
+    .panel-heading {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    h3 { margin: 0; font-size: 1rem; }
+    .muted { color: var(--muted); }
+    .add-form { display: flex; gap: 8px; }
+    input[type="text"], input[type="date"], input[type="number"], textarea, select {
+      width: 100%;
+      min-width: 0;
+      padding: 10px 11px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      background: var(--input-bg);
+    }
+
+    input::placeholder, textarea::placeholder { color: var(--muted); }
+    input[type="date"] { color-scheme: inherit; }
+    input[type="number"] { appearance: textfield; }
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button { margin: 0; appearance: none; }
+
+    .primary-button, .secondary-button, .icon-button {
+      border: 0;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .primary-button {
+      flex: 0 0 auto;
+      padding: 10px 13px;
+      color: var(--accent-contrast);
+      background: var(--accent);
+      font-weight: 700;
+    }
+
+    .primary-button:hover { background: var(--accent-hover); }
+    .secondary-button {
+      padding: 8px 11px;
+      border: 1px solid var(--border);
+      color: var(--text);
+      background: var(--surface-raised);
+      font-size: .85rem;
+    }
+
+    .secondary-button:hover, .icon-button:hover { border-color: var(--accent); background: var(--surface-raised); }
+    .resource-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr));
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .resource-chip {
+      display: flex;
+      min-width: 0;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 6px 8px 6px 11px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      color: var(--text);
+      background: var(--surface-raised);
+      font-size: .86rem;
+    }
+
+    .resource-name { min-width: 0; overflow-wrap: anywhere; }
+    .resource-actions { display: flex; flex: 0 0 auto; align-items: center; gap: 2px; }
+    .resource-edit-form { display: flex; width: 100%; min-width: 0; gap: 6px; }
+    .resource-edit-form input { padding: 6px 8px; }
+    .resource-edit-form .icon-button { flex: 0 0 27px; }
+
+    .icon-button {
+      display: inline-grid;
+      width: 25px;
+      height: 25px;
+      place-items: center;
+      border: 1px solid transparent;
+      color: var(--muted);
+      background: transparent;
+      font-size: 1rem;
+    }
+
+    .table-wrap { width: 100%; overflow: auto; border: 1px solid var(--border); border-radius: 8px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td {
+      min-width: 104px;
+      padding: 11px 12px;
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+    }
+
+    th {
+      position: sticky;
+      z-index: 1;
+      top: 0;
+      color: var(--muted);
+      background: var(--table-head);
+      font-size: .82rem;
+      font-weight: 650;
+    }
+
+    th:first-child, td:first-child { min-width: 260px; text-align: left; }
+    th:not(:first-child) { min-width: 175px; max-width: 240px; overflow-wrap: anywhere; }
+    tr:last-child td { border-bottom: 0; }
+    td:first-child { color: var(--text); font-weight: 600; }
+    td input[type="checkbox"] {
+      display: inline-grid;
+      width: 19px;
+      height: 19px;
+      place-content: center;
+      margin: 0;
+      appearance: none;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--checkbox-bg);
+      cursor: pointer;
+      transition: background .15s ease, border-color .15s ease, transform .15s ease;
+    }
+
+    td input[type="checkbox"]:hover { border-color: var(--accent); transform: scale(1.08); }
+    td input[type="checkbox"]:checked { border-color: var(--accent); background: var(--accent); }
+    td input[type="checkbox"]:checked::after {
+      width: 5px;
+      height: 9px;
+      border: solid var(--accent-contrast);
+      border-width: 0 2px 2px 0;
+      content: "";
+      transform: rotate(45deg) translate(-1px, -1px);
+    }
+
+    .topic-row:nth-child(even) { background: var(--row-even); }
+    .topic-row:hover { background: var(--row-hover); }
+    .theme-row td { padding: 0; background: var(--theme-row); }
+    .theme-toggle {
+      display: flex;
+      width: 100%;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px;
+      border: 0;
+      color: var(--text);
+      background: transparent;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .theme-toggle:hover { background: var(--row-hover); }
+    .theme-name { display: flex; align-items: center; gap: 9px; }
+    .theme-chevron { color: var(--accent); }
+    .theme-progress { color: var(--muted); font-size: .8rem; font-weight: 500; white-space: nowrap; }
+    .section-row td {
+      padding: 9px 12px 7px;
+      color: var(--accent);
+      background: var(--section-row);
+      font-size: .78rem;
+      font-weight: 700;
+      text-align: left;
+    }
+
+    .topic-row td:first-child { padding-left: 28px; font-weight: 500; }
+    .topic-count { color: var(--muted); font-size: .8rem; font-weight: 500; }
+
+    .agenda-form { display: grid; gap: 10px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .agenda-form label { display: grid; gap: 6px; color: var(--muted); font-size: .8rem; }
+    .agenda-form .primary-button { width: 100%; }
+    .agenda-list { display: grid; gap: 9px; margin-top: 14px; }
+    .agenda-item {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 88px auto;
+      align-items: start;
+      gap: 8px;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--agenda-bg);
+    }
+
+    .agenda-title { margin: 0; color: var(--text); font-size: .88rem; font-weight: 650; overflow-wrap: anywhere; }
+    .agenda-meta { margin: 4px 0 0; color: var(--muted); font-size: .78rem; overflow-wrap: anywhere; }
+    .agenda-duration { padding: 6px 7px !important; text-align: center; }
+    .agenda-video { color: var(--accent); font-size: .78rem; }
+    .empty { margin: 12px 0 0; color: var(--muted); font-size: .88rem; }
+    .status { min-height: 20px; margin: 14px 0 0; color: #ff8578; font-size: .88rem; }
+    .goal-card {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 18px;
+      padding: 18px 20px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: linear-gradient(120deg, var(--surface), var(--surface-raised));
+      box-shadow: var(--shadow);
+    }
+    .goal-title { margin: 0; font-size: .98rem; font-weight: 700; }
+    .goal-summary { margin: 5px 0 0; color: var(--muted); font-size: .84rem; }
+    .goal-track { height: 8px; margin-top: 13px; overflow: hidden; border-radius: 99px; background: var(--border); }
+    .goal-track .progress-fill { background: linear-gradient(90deg, var(--accent), var(--green)); }
+    .goal-form { display: flex; align-items: center; gap: 8px; }
+    .goal-form label { color: var(--muted); font-size: .8rem; white-space: nowrap; }
+    .goal-form input { width: 88px; padding: 8px; text-align: center; }
+    .goal-form .secondary-button { white-space: nowrap; }
+    .status:empty { display: none; }
+
+    @media (max-width: 1050px) {
+      .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 760px) {
+      .topbar { padding: 12px 16px; }
+      .topbar-actions { gap: 10px; }
+      .theme-control span { display: none; }
+      .topbar-date { display: none; }
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { padding: 14px 16px; border-right: 0; border-bottom: 1px solid var(--border); }
+      .grade-list { display: flex; gap: 6px; }
+      .grade-button { justify-content: center; padding: 9px 5px; font-size: .82rem; }
+      .grade-chevron { display: none; }
+      .subject-list { grid-column: 1 / -1; display: flex; flex-wrap: wrap; padding: 8px 0 0; }
+      .subject-button { width: auto; padding: 7px 9px; }
+      .content { padding: 22px 16px 36px; }
+      .workspace { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 480px) {
+      .brand p { display: none; }
+      .stats { gap: 8px; }
+      .stat-card { min-height: 92px; padding: 12px; }
+      .stat-value { font-size: 1.35rem; }
+      .add-form { flex-wrap: wrap; }
+      .add-form .primary-button { width: 100%; }
+      .form-row { grid-template-columns: 1fr; }
+      .panel { padding: 15px; }
+      .goal-card { grid-template-columns: 1fr; padding: 16px; }
+      .goal-form { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">D</div>
+        <div>
+          <h1>Ders Takip</h1>
+          <p>Kaynaklarını düzenle, gelişimini izle</p>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <label class="theme-control">
+          <span>Tema</span>
+          <select id="themePicker" aria-label="Uygulama temasını seç">
+            <option value="midnight">Gece</option>
+            <option value="light">Aydınlık</option>
+            <option value="ocean">Okyanus</option>
+            <option value="forest">Orman</option>
+          </select>
+        </label>
+        <time id="today" class="topbar-date"></time>
+      </div>
+    </header>
+    <div class="layout">
+      <aside class="sidebar" aria-label="Sınıf ve ders seçimi">
+        <p class="sidebar-label">Kademe</p>
+        <nav id="navigation" class="grade-list"></nav>
+      </aside>
+      <main class="content">
+        <div id="app"></div>
+        <p id="status" class="status" role="status" aria-live="polite"></p>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    const grades = ["TYT", "11. Sınıf"];
+    const subjectsByGrade = {
+      "TYT": [
+        "Türkçe", "Tarih", "Coğrafya", "Din",
+        "Felsefe", "Matematik", "Fizik", "Kimya", "Biyoloji"
+      ],
+      "11. Sınıf": ["Matematik", "Fizik", "Kimya", "Biyoloji"]
+    };
+    const tytSyllabusBySubject = {
+      "Türkçe": [
+        {
+          name: "Ünite 1 — Anlam Bilgisi",
+          sections: [{
+            name: "Anlam bilgisi",
+            topics: [
+              "Sözcükte anlam",
+              "Deyim ve atasözü",
+              "Cümlede kavramlar",
+              "Cümle yorumu",
+              "Anlatım teknikleri",
+              "Paragraf yorumu",
+              "Paragrafta yardımcı düşünce",
+              "Paragraf yapısı"
+            ]
+          }]
+        },
+        {
+          name: "Ünite 2 — Ses, Yazım, Noktalama",
+          sections: [{
+            name: "Ses, yazım ve noktalama",
+            topics: [
+              "Ses bilgisi",
+              "Yazım kuralları",
+              "Noktalama işaretleri"
+            ]
+          }]
+        },
+        {
+          name: "Ünite 3 — Sözcük Yapısı",
+          sections: [{
+            name: "Sözcük yapısı",
+            topics: ["Sözcük yapısı"]
+          }]
+        },
+        {
+          name: "Ünite 4 — İsim Soylu Sözcükler",
+          sections: [{
+            name: "İsim soylu sözcükler",
+            topics: [
+              "İsim",
+              "Sıfat",
+              "Zamir",
+              "Zarf",
+              "Edat",
+              "Bağlaç",
+              "Ünlem"
+            ]
+          }]
+        },
+        {
+          name: "Ünite 5 — Fiiller",
+          sections: [{
+            name: "Fiiller",
+            topics: [
+              "Fiil çekimi",
+              "Fiil",
+              "Fiilde yapı",
+              "Fiilimsiler",
+              "Fiilde çatı"
+            ]
+          }]
+        },
+        {
+          name: "Ünite 6 — Cümle Bilgisi",
+          sections: [{
+            name: "Cümle bilgisi",
+            topics: [
+              "Söz öbekleri",
+              "Cümlenin ögeleri",
+              "Cümle çeşitleri"
+            ]
+          }]
+        }
+      ],
+      "Coğrafya": [
+        {
+          name: "9. Sınıf — 1. Coğrafyanın Doğası",
+          sections: [{
+            name: "Coğrafyanın doğası",
+            topics: [
+              "Coğrafyanın konusu, yaklaşımı ve gelişimi",
+              "Coğrafyanın günlük yaşamla ilişkisi"
+            ]
+          }]
+        },
+        {
+          name: "9. Sınıf — 2. Mekânsal Bilgi Teknolojileri",
+          sections: [{
+            name: "Mekânsal bilgi teknolojileri",
+            topics: [
+              "Harita bileşenleri ve harita uygulamaları",
+              "Coğrafi koordinat sistemi",
+              "Türkiye’nin coğrafi konumu",
+              "Mekânsal bilgi teknolojileri"
+            ]
+          }]
+        },
+        {
+          name: "9. Sınıf — 3. Doğal Sistemler ve Süreçler",
+          sections: [{
+            name: "Doğal sistemler ve süreçler",
+            topics: [
+              "Dünya’nın oluşumu ve doğal sistemler",
+              "İklim ve hava olaylarıyla ilgili temel süreçler"
+            ]
+          }]
+        },
+        {
+          name: "9. Sınıf — 4. Beşerî Sistemler ve Süreçler",
+          sections: [{
+            name: "Beşerî sistemler ve süreçler",
+            topics: [
+              "Nüfusun tarihsel değişimi",
+              "Nüfusun dağılışı ve etkileyen faktörler",
+              "Demografik dönüşüm ve nüfus piramitleri"
+            ]
+          }]
+        },
+        {
+          name: "9. Sınıf — 5. Ekonomik Faaliyetler ve Etkileri",
+          sections: [{
+            name: "Ekonomik faaliyetler ve etkileri",
+            topics: [
+              "Ekonomik faaliyetleri etkileyen doğal ve beşerî faktörler"
+            ]
+          }]
+        },
+        {
+          name: "9. Sınıf — 6. Afetler ve Sürdürülebilir Çevre",
+          sections: [{
+            name: "Afetler ve sürdürülebilir çevre",
+            topics: [
+              "Afetler, etkileri ve çevresel sürdürülebilirlik"
+            ]
+          }]
+        },
+        {
+          name: "9. Sınıf — 7. Bölgeler, Ülkeler ve Küresel Bağlantılar",
+          sections: [{
+            name: "Bölgeler, ülkeler ve küresel bağlantılar",
+            topics: [
+              "Bölge türleri ve bölge sınırları",
+              "Bölgelerin özellikleri ve değişebilirliği"
+            ]
+          }]
+        },
+        {
+          name: "10. Sınıf — 1. Coğrafyanın Doğası",
+          sections: [{
+            name: "Coğrafyanın doğası",
+            topics: [
+              "Coğrafi bakış açısı",
+              "Konum, zaman, mekân, hareket ve bölge kavramları"
+            ]
+          }]
+        },
+        {
+          name: "10. Sınıf — 2. Mekânsal Bilgi Teknolojileri",
+          sections: [{
+            name: "Mekânsal bilgi teknolojileri",
+            topics: [
+              "Haritalar ve mekânsal veriler",
+              "Coğrafi bilgi teknolojilerinin kullanımı"
+            ]
+          }]
+        },
+        {
+          name: "10. Sınıf — 3. Doğal Sistemler ve Süreçler",
+          sections: [{
+            name: "Doğal sistemler ve süreçler",
+            topics: [
+              "Yeryüzü şekillerinin oluşumu",
+              "Kayaçlar ve dış kuvvetler",
+              "Su, toprak ve bitki örtüsüyle ilgili doğal süreçler"
+            ]
+          }]
+        },
+        {
+          name: "10. Sınıf — 4. Beşerî Sistemler ve Süreçler",
+          sections: [{
+            name: "Beşerî sistemler ve süreçler",
+            topics: [
+              "Yerleşmeler ve yerleşme özellikleri",
+              "Yerleşmelerin dağılışı ve gelişimi"
+            ]
+          }]
+        },
+        {
+          name: "10. Sınıf — 5. Ekonomik Faaliyetler ve Etkileri",
+          sections: [{
+            name: "Ekonomik faaliyetler ve etkileri",
+            topics: [
+              "Ekonomik faaliyetlerin dağılışı",
+              "Ekonomik faaliyetler ile doğal ve beşerî çevre ilişkisi"
+            ]
+          }]
+        },
+        {
+          name: "10. Sınıf — 6. Afetler ve Sürdürülebilir Çevre",
+          sections: [{
+            name: "Afetler ve sürdürülebilir çevre",
+            topics: [
+              "Doğal ve beşerî kaynaklı afetler",
+              "Afetlerden korunma ve sürdürülebilir çevre"
+            ]
+          }]
+        },
+        {
+          name: "10. Sınıf — 7. Bölgeler, Ülkeler ve Küresel Bağlantılar",
+          sections: [{
+            name: "Bölgeler, ülkeler ve küresel bağlantılar",
+            topics: [
+              "Bölgeler ve ülkeler arasındaki ilişkiler",
+              "Küresel bağlantılar"
+            ]
+          }]
+        }
+      ],
+      "Tarih": [
+        {
+          name: "9. Sınıf — 1. Geçmişin İnşa Sürecinde Tarih",
+          sections: [{
+            name: "Geçmişin inşa sürecinde tarih",
+            topics: [
+              "Tarih öğrenmenin bireye ve topluma faydaları",
+              "Tarihin doğası ve tarihsel bilginin özellikleri",
+              "Tarihsel bilginin üretilmesi",
+              "Tarih araştırmalarında ve yazımında dijitalleşme"
+            ]
+          }]
+        },
+        {
+          name: "9. Sınıf — 2. Eski Çağ Medeniyetleri",
+          sections: [{
+            name: "Eski Çağ medeniyetleri",
+            topics: [
+              "Tarım Devrimi’nin yerleşik hayata ve ekonomiye etkileri",
+              "Eski Çağ medeniyetlerinde yönetim ve ordu",
+              "Eski Çağ’da hukuk ve toplumsal düzen",
+              "İnanç, bilim ve sanat",
+              "Türklerde konargöçer yaşam"
+            ]
+          }]
+        },
+        {
+          name: "9. Sınıf — 3. Orta Çağ Medeniyetleri",
+          sections: [{
+            name: "Orta Çağ medeniyetleri",
+            topics: [
+              "Orta Çağ’daki kitlesel göçler",
+              "Siyasi ve askerî gelişmeler",
+              "Orta Çağ’da ticaret yolları",
+              "Bilim, kültür ve sanat"
+            ]
+          }]
+        },
+        {
+          name: "10. Sınıf — 1. Türkistan’dan Türkiye’ye (1040–1299)",
+          sections: [{
+            name: "Türkistan’dan Türkiye’ye (1040–1299)",
+            topics: [
+              "Türklerin Türkistan’dan Anadolu’ya uzanan tarihî süreci",
+              "Önemli askerî mücadeleler",
+              "Türk devlet ve ordu teşkilatındaki değişim",
+              "Türklerin sosyal yaşamı ve ekonomik faaliyetleri",
+              "Türk-İslam medeniyetinde bilim, kültür, eğitim ve sanat",
+              "Anadolu’nun Türkleşmesi ve İslamlaşması"
+            ]
+          }]
+        },
+        {
+          name: "10. Sınıf — 2. Beylikten Devlete Osmanlı (1299–1453)",
+          sections: [{
+            name: "Beylikten Devlete Osmanlı (1299–1453)",
+            topics: [
+              "Osmanlı Devleti’nin kuruluşu ve kuruluşuyla ilgili farklı görüşler",
+              "Anadolu ve Rumeli’deki siyasi ve askerî mücadeleler",
+              "Devletleşme süreci",
+              "Ordu, hukuk ve toprak sistemleri",
+              "Fethedilen topraklarda kalıcılığı sağlayan politikalar",
+              "Osmanlı ilim ve irfan geleneği"
+            ]
+          }]
+        },
+        {
+          name: "10. Sınıf — 3. Cihan Devleti Osmanlı (1453–1683)",
+          sections: [{
+            name: "Cihan Devleti Osmanlı (1453–1683)",
+            topics: [
+              "Osmanlı’nın siyasi ve askerî mücadeleleri",
+              "Yönetim ve ordu yapısındaki değişimler",
+              "Avrupa’nın sömürgeci politikaları ve etkileri",
+              "Osmanlı’daki önemli isyanlar ve sonuçları",
+              "Bilim, kültür, eğitim ve sanat alanındaki gelişmeler"
+            ]
+          }]
+        }
+      ],
+      "Matematik": [
+        {
+          name: "9. Sınıf — 1. Sayılar",
+          sections: [{
+            name: "Sayılar",
+            topics: [
+              "Gerçek sayıların üslü gösterimleri",
+              "Gerçek sayıların köklü gösterimleri",
+              "Üslü ve köklü ifadelerle işlemler",
+              "Bilimsel gösterim",
+              "Gerçek sayı aralıkları",
+              "Aralıkların sayı doğrusunda gösterimi",
+              "Aralıklarla birleşim, kesişim, fark ve tümleme işlemleri",
+              "Doğal sayılar, tam sayılar, rasyonel ve gerçek sayılar",
+              "Sayı kümelerinin özellikleri",
+              "İşlem özellikleri ve cebirsel ifadeler",
+              "Özdeşlikler ve çarpanlara ayırma"
+            ]
+          }]
+        },
+        {
+          name: "9. Sınıf — 2. Nicelikler ve Değişimler",
+          sections: [{
+            name: "Nicelikler ve değişimler",
+            topics: [
+              "Gerçek yaşam durumlarını matematiksel olarak ifade etme",
+              "Doğrusal fonksiyonlar",
+              "Doğrusal fonksiyonların cebirsel gösterimi",
+              "Fonksiyonların grafikleri",
+              "Fonksiyon grafiklerinin yorumlanması",
+              "Doğrusal fonksiyonların özellikleri",
+              "Denklem ve eşitsizliklerle problem çözme",
+              "Doğrusal ilişkilerde değişkenler arasındaki bağlantılar"
+            ]
+          }]
+        },
+        {
+          name: "9. Sınıf — 3. Geometrik Şekiller",
+          sections: [{
+            name: "Geometrik şekiller",
+            topics: [
+              "Üçgenlerin temel özellikleri",
+              "Üçgenlerde açı ve kenar ilişkileri",
+              "Üçgen eşitsizliği",
+              "Üçgenlerde yardımcı elemanlar",
+              "Geometrik çıkarım ve ispat"
+            ]
+          }]
+        },
+        {
+          name: "9. Sınıf — 4. Eşlik ve Benzerlik",
+          sections: [{
+            name: "Eşlik ve benzerlik",
+            topics: [
+              "Geometrik şekillerde eşlik",
+              "Üçgenlerde eşlik koşulları",
+              "Geometrik şekillerde benzerlik",
+              "Üçgenlerde benzerlik koşulları",
+              "Benzerlik oranı",
+              "Uzunluk ve alan ilişkileri",
+              "Benzerlik kullanılarak problem çözme"
+            ]
+          }]
+        },
+        {
+          name: "9. Sınıf — 5. Algoritma ve Bilişim",
+          sections: [{
+            name: "Algoritma ve bilişim",
+            topics: [
+              "Algoritmik düşünme",
+              "Problemi adımlara ayırma",
+              "Algoritmaları farklı gösterimlerle ifade etme",
+              "Matematiksel problemlerde algoritma kullanma"
+            ]
+          }]
+        },
+        {
+          name: "9. Sınıf — 6. İstatistiksel Araştırma Süreci",
+          sections: [{
+            name: "İstatistiksel araştırma süreci",
+            topics: [
+              "İstatistiksel araştırma sorusu oluşturma",
+              "Veri toplama ve düzenleme",
+              "Kategorik ve nicel veriler",
+              "Verilerin tablo ve grafiklerle gösterimi",
+              "Verileri yorumlama",
+              "Araştırma sonuçlarını değerlendirme"
+            ]
+          }]
+        },
+        {
+          name: "9. Sınıf — 7. Veriden Olasılığa",
+          sections: [{
+            name: "Veriden olasılığa",
+            topics: [
+              "Deneysel olasılık",
+              "Olasılık deneyleri",
+              "Sonuçlar ve örnek uzay",
+              "Verilerden olasılığa ilişkin çıkarım yapma"
+            ]
+          }]
+        },
+        {
+          name: "10. Sınıf — 1. Geometrik Şekiller",
+          sections: [{
+            name: "Geometrik şekiller",
+            topics: [
+              "Dörtgenler ve özellikleri",
+              "Özel dörtgenler",
+              "Çokgenler",
+              "Çokgenlerde kenar ve açı ilişkileri",
+              "Geometrik şekillerde çıkarım ve problem çözme"
+            ]
+          }]
+        },
+        {
+          name: "10. Sınıf — 2. İstatistiksel Araştırma Süreci",
+          sections: [{
+            name: "İstatistiksel araştırma süreci",
+            topics: [
+              "İstatistiksel araştırma soruları",
+              "Veri toplama ve düzenleme",
+              "Verilerin uygun grafiklerle gösterimi",
+              "İstatistiksel sonuçları yorumlama",
+              "Araştırma sonuçlarını karşılaştırma ve değerlendirme"
+            ]
+          }]
+        },
+        {
+          name: "10. Sınıf — 3. Sayılar",
+          sections: [{
+            name: "Sayılar",
+            topics: [
+              "Asal sayılar ve asal çarpanlar",
+              "Bölünebilme ve bölünebilme ilişkileri",
+              "EBOB ve EKOK bağlamındaki sayı ilişkileri",
+              "Sayıların özelliklerinden yararlanarak problem çözme"
+            ]
+          }]
+        },
+        {
+          name: "10. Sınıf — 4. Nicelikler ve Değişimler",
+          sections: [{
+            name: "Nicelikler ve değişimler",
+            topics: [
+              "Fonksiyon kavramı",
+              "Fonksiyonların grafik ve cebirsel temsilleri",
+              "Fonksiyonların özellikleri",
+              "İkinci dereceden ilişkiler ve fonksiyonlar",
+              "Denklem ve eşitsizlikler",
+              "Gerçek yaşam durumlarının matematiksel modellenmesi"
+            ]
+          }]
+        },
+        {
+          name: "10. Sınıf — 5. Sayma, Algoritma ve Bilişim",
+          sections: [{
+            name: "Sayma, algoritma ve bilişim",
+            topics: [
+              "Sistematik sayma",
+              "Sayma yöntemleri",
+              "Algoritmik düşünme",
+              "Sayma problemlerinin matematiksel modellenmesi"
+            ]
+          }]
+        },
+        {
+          name: "10. Sınıf — 6. Analitik İnceleme",
+          sections: [{
+            name: "Analitik inceleme",
+            topics: [
+              "Koordinat sistemi",
+              "Noktaların koordinatları",
+              "Doğru ve doğrusal ilişkilerin analitik gösterimi",
+              "Geometrik ilişkilerin koordinatlarla incelenmesi",
+              "Analitik yöntemlerle problem çözme"
+            ]
+          }]
+        },
+        {
+          name: "10. Sınıf — 7. Veriden Olasılığa",
+          sections: [{
+            name: "Veriden olasılığa",
+            topics: [
+              "Olasılık deneyleri",
+              "Örnek uzay ve olaylar",
+              "Olasılık hesaplamaları",
+              "Olasılık sonuçlarını yorumlama",
+              "Veriye dayalı olasılık çıkarımları"
+            ]
+          }]
+        }
+      ],
+      "Fizik": [
+        {
+          name: "9. Sınıf — 1. Fizik Bilimi ve Kariyer Keşfi",
+          sections: [{
+            name: "Fizik bilimi ve kariyer keşfi",
+            topics: [
+              "Fizik biliminin konusu ve çalışma alanları",
+              "Fiziğin diğer bilimlerle ilişkisi",
+              "Fiziğin alt dalları",
+              "Fizik biliminin gelişimine katkı sağlayan bilim insanları",
+              "Fizik bilimiyle ilişkili meslekler",
+              "Temel ve türetilmiş fiziksel nicelikler",
+              "Uluslararası Birim Sistemi (SI)",
+              "Skaler ve vektörel nicelikler"
+            ]
+          }]
+        },
+        {
+          name: "9. Sınıf — 2. Kuvvet ve Hareket",
+          sections: [{
+            name: "Kuvvet ve hareket",
+            topics: [
+              "Referans noktası",
+              "Konum ve yer değiştirme",
+              "Alınan yol",
+              "Sürat ve hız",
+              "İvme",
+              "Hareketin temel kavramları arasındaki ilişkiler",
+              "Vektörler ve vektörlerin bileşenleri",
+              "Kuvvet ve kuvvetin vektörel gösterimi",
+              "Doğadaki temel kuvvetler",
+              "Hareketin matematiksel olarak modellenmesi"
+            ]
+          }]
+        },
+        {
+          name: "9. Sınıf — 3. Akışkanlar",
+          sections: [{
+            name: "Akışkanlar",
+            topics: [
+              "Basınç kavramı",
+              "Katılarda basınç",
+              "Sıvılarda basınç",
+              "Açık hava basıncı",
+              "Sıvı basıncını etkileyen değişkenler",
+              "Pascal ilkesi",
+              "Kaldırma kuvveti",
+              "Cismin sıvıdaki yüzme, batma ve askıda kalma koşulları",
+              "Bernoulli ilkesi",
+              "Akışkanların hareketi ve günlük yaşam uygulamaları"
+            ]
+          }]
+        },
+        {
+          name: "9. Sınıf — 4. Enerji",
+          sections: [{
+            name: "Enerji",
+            topics: [
+              "Enerji kavramı",
+              "Enerji türleri",
+              "Mekanik enerjiyle ilgili temel kavramlar",
+              "Enerji dönüşümleri",
+              "Enerjinin korunumu",
+              "Enerji kaynakları",
+              "Yenilenebilir ve yenilenemez enerji kaynakları",
+              "Enerji kullanımının çevresel etkileri"
+            ]
+          }]
+        },
+        {
+          name: "10. Sınıf — 1. Kuvvet ve Hareket",
+          sections: [{
+            name: "Kuvvet ve hareket",
+            topics: [
+              "Sabit hızlı hareket",
+              "Konum, yer değiştirme ve alınan yol",
+              "Hız ve sürat",
+              "İvme ve hız değişimi",
+              "Bir boyutta sabit ivmeli hareket",
+              "Konum-zaman grafiği",
+              "Hız-zaman grafiği",
+              "İvme-zaman grafiği",
+              "Grafikler arasındaki matematiksel ilişkiler",
+              "Grafiklerden hareketle hesaplama ve yorumlama"
+            ]
+          }]
+        },
+        {
+          name: "10. Sınıf — 2. Enerji",
+          sections: [{
+            name: "Enerji",
+            topics: [
+              "İş kavramı",
+              "Kuvvet-yer değiştirme ilişkisi",
+              "Kuvvet-yer değiştirme grafiği",
+              "İş, enerji ve güç arasındaki ilişki",
+              "Enerji biçimleri",
+              "Kinetik enerji ve potansiyel enerji",
+              "Mekanik enerji",
+              "Mekanik enerjinin korunumu",
+              "Yenilenebilir enerji kaynakları",
+              "Yenilenemez enerji kaynakları",
+              "Enerji kaynaklarının avantajları ve dezavantajları"
+            ]
+          }]
+        },
+        {
+          name: "10. Sınıf — 3. Elektrik",
+          sections: [{
+            name: "Elektrik",
+            topics: [
+              "Elektrik yükleri ve elektriklenme",
+              "Elektrik yüklerinin etkileşimi",
+              "Elektrik akımı",
+              "Potansiyel fark",
+              "Direnç",
+              "Ohm yasası",
+              "Elektrik devreleri",
+              "Seri ve paralel devrelerde elektriksel büyüklükler",
+              "Elektriksel güç ve enerji",
+              "Elektrik güvenliği ve elektrik kullanımının günlük yaşamla ilişkisi"
+            ]
+          }]
+        },
+        {
+          name: "10. Sınıf — 4. Dalgalar",
+          sections: [{
+            name: "Dalgalar",
+            topics: [
+              "Dalga hareketinin temel kavramları",
+              "Dalga çeşitleri",
+              "Dalga boyu",
+              "Frekans",
+              "Periyot",
+              "Dalga hızı",
+              "Genlik",
+              "Su dalgaları",
+              "Ses dalgaları",
+              "Deprem dalgaları",
+              "Dalgaların yansıması ve kırılması",
+              "Dalgaların günlük yaşam ve teknolojideki uygulamaları"
+            ]
+          }]
+        }
+      ],
+      "Kimya": [
+        {
+          name: "9. Sınıf — 1. Etkileşim",
+          sections: [
+            {
+              name: "Kimya Hayattır",
+              topics: [
+                "Kimyanın günlük yaşamdaki yeri",
+                "Kimyanın alt disiplinleri",
+                "Kimyasal maddelerin kullanımı",
+                "Kimyasal maddelerle çalışırken güvenlik",
+                "Kimya alanındaki meslekler"
+              ]
+            },
+            {
+              name: "Atomdan Periyodik Tabloya",
+              topics: [
+                "Atomun yapısı",
+                "Atom teorileri",
+                "Bohr atom teorisi",
+                "Modern atom teorisi",
+                "Atom orbitalleri",
+                "Elektron dizilimi",
+                "Periyodik tabloda elementlerin yerleri",
+                "Periyodik özellikler",
+                "Atom yarıçapı",
+                "İyonlaşma enerjisi",
+                "Elektronegatiflik"
+              ]
+            }
+          ]
+        },
+        {
+          name: "9. Sınıf — 2. Çeşitlilik",
+          sections: [
+            {
+              name: "Etkileşimler",
+              topics: [
+                "Metalik bağ",
+                "İyonik bağ",
+                "Kovalent bağ",
+                "Lewis nokta yapıları",
+                "Molekül polarlığı ve apolarlığı",
+                "Bileşiklerin adlandırılması"
+              ]
+            },
+            {
+              name: "Etkileşimden Maddeye",
+              topics: [
+                "Moleküller arası etkileşimler",
+                "Katılar ve katıların özellikleri",
+                "Amorf katılar",
+                "Kristal katılar",
+                "Sıvıların özellikleri",
+                "Buhar basıncı",
+                "Kaynama sıcaklığı",
+                "Viskozite",
+                "Adezyon ve kohezyon",
+                "Yüzey gerilimi"
+              ]
+            }
+          ]
+        },
+        {
+          name: "9. Sınıf — 3. Sürdürülebilirlik",
+          sections: [{
+            name: "Sürdürülebilirlik",
+            topics: [
+              "Metal nanoparçacıklar",
+              "Evsel atıklardan nanoparçacık elde edilmesi",
+              "Metaller ve alaşımlar",
+              "Metal nanoparçacıkların çevresel etkileri",
+              "Ağır metal birikimi",
+              "Yeşil kimya",
+              "Atık önleme",
+              "Ekolojik sürdürülebilirlik"
+            ]
+          }]
+        },
+        {
+          name: "10. Sınıf — 1. Etkileşim",
+          sections: [
+            {
+              name: "Kimyasal Tepkimeler",
+              topics: [
+                "Kimyasal değişimin belirtileri",
+                "Kimyasal tepkimelerin oluşumu",
+                "Kimyasal tepkime türleri",
+                "Mol kavramı",
+                "Kimyasal tepkime denklemlerinin denkleştirilmesi",
+                "Kimyasal hesaplamalar",
+                "Stokiyometri",
+                "Tepkime hesaplamalarında madde miktarı",
+                "Sınırlayıcı bileşen",
+                "Teorik verim ve yüzde verim"
+              ]
+            },
+            {
+              name: "Gazlar",
+              topics: [
+                "Gazların özellikleri",
+                "Kinetik moleküler teori",
+                "Gaz basıncı, hacim ve sıcaklık",
+                "Gaz yasaları",
+                "İdeal gaz yasası",
+                "Mutlak sıcaklık",
+                "Difüzyon",
+                "Efüzyon",
+                "Graham yasası"
+              ]
+            }
+          ]
+        },
+        {
+          name: "10. Sınıf — 2. Çeşitlilik",
+          sections: [{
+            name: "Çözeltiler",
+            topics: [
+              "Çözünme süreci",
+              "Maddelerin birbiri içinde çözünmesi",
+              "Çözünme türleri",
+              "Çözünürlük",
+              "Çözünürlüğe etki eden faktörler",
+              "Sıcaklığın çözünürlüğe etkisi",
+              "Basıncın çözünürlüğe etkisi",
+              "Madde cinsinin çözünürlüğe etkisi",
+              "Çözeltilerin sınıflandırılması",
+              "Derişim",
+              "Molarite",
+              "ppm",
+              "Koligatif özellikler",
+              "Kaynama noktası yükselmesi",
+              "Donma noktası düşmesi"
+            ]
+          }]
+        },
+        {
+          name: "10. Sınıf — 3. Sürdürülebilirlik",
+          sections: [{
+            name: "Sürdürülebilirlik",
+            topics: [
+              "Yeşil kimya",
+              "Çevresel ve ekolojik sürdürülebilirlik",
+              "Mikro ve makro ölçekli deneyler",
+              "Atmosferdeki kimyasal tepkimeler",
+              "Hava kirliliği",
+              "Ozon tabakasının incelmesi",
+              "Asit yağmurları",
+              "Sera etkisi",
+              "Küresel ısınma",
+              "Sera gazları",
+              "Su ayak izi ve emisyon ayak izi",
+              "Kimyasal süreçlerin çevresel etkileri"
+            ]
+          }]
+        }
+      ],
+      "Biyoloji": [
+        {
+          name: "9. Sınıf — 1. Yaşam",
+          sections: [
+            {
+              name: "Yaşam Bilimi: Biyoloji",
+              topics: [
+                "Biyolojinin önemi",
+                "Biyoloji tarihindeki dönüm noktaları",
+                "Bilimin doğası",
+                "Bilimsel araştırma süreçleri",
+                "Bilim etiği",
+                "Canlıların ortak özellikleri",
+                "Hücresel yapı ve organizasyon",
+                "Beslenme",
+                "Enerji üretimi ve tüketimi",
+                "Boşaltım",
+                "Büyüme ve gelişme",
+                "Metabolizma",
+                "Uyarılara tepki",
+                "Homeostazi",
+                "Üreme",
+                "Varyasyon ve adaptasyon"
+              ]
+            },
+            {
+              name: "Temel Bileşenler",
+              topics: [
+                "İnorganik moleküller",
+                "Su ve suyun özellikleri",
+                "Mineraller ve görevleri",
+                "Organik moleküller",
+                "Karbonhidratlar",
+                "Monosakkaritler, disakkaritler ve polisakkaritler",
+                "Lipitler",
+                "Yağ asitleri ve trigliseritler",
+                "Fosfolipitler ve steroitler",
+                "Proteinler",
+                "Amino asitler",
+                "Enzimler",
+                "Enzim-substrat ilişkisi",
+                "Aktivasyon enerjisi",
+                "Enzim aktivitesini etkileyen faktörler",
+                "DNA ve RNA'nın yapısı",
+                "Vitaminler",
+                "Yağda ve suda çözünen vitaminler",
+                "Besinlerde karbonhidrat, yağ ve protein varlığının belirlenmesi"
+              ]
+            }
+          ]
+        },
+        {
+          name: "9. Sınıf — 2. Organizasyon",
+          sections: [
+            {
+              name: "Hücrenin Organizasyonu",
+              topics: [
+                "Hücre teorisi ve hücresel organizasyon",
+                "Prokaryot ve ökaryot hücreler",
+                "Hücre zarı",
+                "Sitoplazma",
+                "Hücresel yapılar ve organeller",
+                "Çekirdek",
+                "Hücre zarından madde geçişleri",
+                "Pasif taşıma",
+                "Basit difüzyon",
+                "Kolaylaştırılmış difüzyon",
+                "Ozmoz",
+                "Aktif taşıma",
+                "Endositoz",
+                "Ekzositoz"
+              ]
+            },
+            {
+              name: "Sınıflandırma ve Biyoçeşitlilik",
+              topics: [
+                "Canlıların sınıflandırılmasının amacı",
+                "Sınıflandırmada temel yaklaşımlar",
+                "Modern sınıflandırma",
+                "Linne ve ikili adlandırma",
+                "Sınıflandırma kategorileri",
+                "Üç üst âlem sistemi",
+                "Bakteriler",
+                "Arkeler",
+                "Ökaryotlar",
+                "Protistler",
+                "Bitkiler",
+                "Mantarlar",
+                "Hayvanlar",
+                "Biyoçeşitlilik",
+                "Türkiye'nin biyolojik çeşitliliği"
+              ]
+            }
+          ]
+        },
+        {
+          name: "10. Sınıf — 1. Enerji",
+          sections: [{
+            name: "Güneşten Besinlere",
+            topics: [
+              "Canlılık için enerjinin önemi",
+              "ATP'nin yapısı",
+              "ATP'nin enerji aktarımındaki rolü",
+              "Fotosentez",
+              "Işığa bağlı tepkimeler",
+              "Işıktan bağımsız tepkimeler",
+              "Fotosentez hızına etki eden çevresel faktörler",
+              "Kemosentez",
+              "Işık enerjisi ve kimyasal enerji arasındaki ilişki",
+              "Besin sentezi ve canlıların enerji ihtiyacı"
+            ]
+          }]
+        },
+        {
+          name: "10. Sınıf — 2. Ekoloji",
+          sections: [
+            {
+              name: "Ekosistemler",
+              topics: [
+                "Ekosistemin canlı ve cansız bileşenleri",
+                "Popülasyon",
+                "Komünite",
+                "Ekosistem",
+                "Tür içi etkileşimler",
+                "Türler arası etkileşimler",
+                "Süksesyon",
+                "Popülasyon dinamikleri",
+                "Besin zincirleri",
+                "Besin ağları",
+                "Ekolojik piramitler",
+                "Ekosistemde enerji akışı",
+                "Biyolojik birikim",
+                "Su döngüsü",
+                "Karbon döngüsü",
+                "Azot döngüsü"
+              ]
+            },
+            {
+              name: "Ekolojik Sürdürülebilirlik",
+              topics: [
+                "Ekolojik sürdürülebilirliğin önemi",
+                "Habitat kaybı ve parçalanması",
+                "Kirlilik ve çevre sorunları",
+                "Biyoçeşitlilik kaybı",
+                "Ekolojik ayak izi",
+                "Doğal kaynakların korunması",
+                "Biyoçeşitliliğin korunması",
+                "Atık yönetimi",
+                "Ekolojik sorunlara çözüm"
+              ]
+            }
+          ]
+        }
+      ]
+    };
+    const syllabusBySubject = {
+      "Matematik": [
+        {
+          name: "1. Tema — İstatistiksel Araştırma Süreci",
+          sections: [{
+            name: "İki nicel değişkenli verileri inceleme",
+            topics: [
+              "İki nicel değişken arasındaki ilişkiyi araştırma",
+              "Araştırma sorusu oluşturma",
+              "Veri toplama ve verileri analize hazırlama",
+              "İki değişkenli veri tabloları",
+              "Serpme (saçılım) diyagramı",
+              "Korelasyon katsayısı",
+              "İlişkinin yönünü ve gücünü yorumlama",
+              "Verilerden sonuç çıkarma",
+              "Başkalarının istatistiksel yorumlarını değerlendirme",
+              "Verilerdeki hata, yanlılık ve hatalı çıkarımları belirleme",
+              "Korelasyonun tek başına neden-sonuç ilişkisi göstermediğini anlama"
+            ]
+          }]
+        },
+        {
+          name: "2. Tema — Geometrik Şekiller",
+          sections: [{
+            name: "Geometrik şekiller",
+            topics: [
+              "Dörtgenlerin özellikleri",
+              "Dörtgenlerin kenar, açı ve köşegen özellikleri",
+              "Özel dörtgenler arasındaki ilişkiler",
+              "Paralelkenar",
+              "Dikdörtgen",
+              "Kare",
+              "Eşkenar dörtgen",
+              "Yamuk",
+              "Deltoid",
+              "Çokgenlerin sınıflandırılması",
+              "Dışbükey ve içbükey çokgenler",
+              "Düzgün çokgenler",
+              "Çokgenlerin açı ve kenar özellikleri",
+              "Çokgenlerin üçgenlere ayrılarak incelenmesi",
+              "Çokgenlerle ilgili problemler"
+            ]
+          }]
+        },
+        {
+          name: "3. Tema — Nicelikler ve Değişimler (1)",
+          sections: [{
+            name: "Trigonometrik fonksiyonlar",
+            topics: [
+              "Yönlü açılar",
+              "Derece ve radyan ölçüsü",
+              "Esas ölçü",
+              "Birim çember",
+              "Sinüs fonksiyonu",
+              "Kosinüs fonksiyonu",
+              "Tanjant fonksiyonu",
+              "Kotanjant fonksiyonu",
+              "Trigonometrik fonksiyonların tanım ve görüntü kümeleri",
+              "Fonksiyonların işaretleri ve sıfırları",
+              "Artanlık ve azalanlık",
+              "Maksimum ve minimum değerler",
+              "Periyot",
+              "Tek ve çift fonksiyon özellikleri",
+              "Bire birlik ve örtenlik",
+              "Trigonometrik fonksiyonların grafikleri",
+              "g(x)=k f(mx±r)±s biçimindeki dönüşümler",
+              "Trigonometrik fonksiyonlarla ifade edilen denklemler ve problemler"
+            ]
+          }]
+        },
+        {
+          name: "4. Tema — Nicelikler ve Değişimler (2)",
+          sections: [{
+            name: "Üstel ve logaritmik fonksiyonlar",
+            topics: [
+              "Üstel fonksiyonlar: f(x)=a^x",
+              "Üstel fonksiyonlarda a>0 ve a≠1 koşulları",
+              "Üstel fonksiyonların tanım ve görüntü kümeleri",
+              "Üstel fonksiyonların işareti, sıfırları ve monotonluğu",
+              "Üstel fonksiyon grafiklerinin dönüşümleri",
+              "Üstel fonksiyonların ters fonksiyonları",
+              "Logaritmik fonksiyon kavramı",
+              "Logaritmik fonksiyonların özellikleri ve grafikleri",
+              "Doğal logaritma ve e sayısı",
+              "Üstel ve logaritmik denklemler",
+              "Üstel ve logaritmik eşitsizlikler",
+              "Gerçek yaşam problemlerinde üstel ve logaritmik modeller"
+            ]
+          }]
+        },
+        {
+          name: "5. Tema — Nicelikler ve Değişimler (3)",
+          sections: [{
+            name: "Fonksiyonlarda işlemler",
+            topics: [
+              "Fonksiyonların bileşkesi",
+              "Bileşke fonksiyonun anlamı ve gösterimi",
+              "Fonksiyonlarda toplama",
+              "Fonksiyonlarda çıkarma",
+              "Fonksiyonlarda çarpma",
+              "Fonksiyonlarda bölme",
+              "Dört işlemin yapılabilme koşulları",
+              "İşlem sonucunda oluşan fonksiyonların cebirsel ve grafiksel temsilleri",
+              "Fonksiyon işlemlerinin özelliklerini yorumlama"
+            ]
+          }]
+        }
+      ],
+      "Fizik": [
+        {
+          name: "1. Ünite — Kuvvet ve Hareket",
+          sections: [
+            {
+              name: "Serbest düşme",
+              topics: [
+                "Yer çekimi ivmesi",
+                "Hız ve ivme arasındaki ilişki",
+                "Konum, yer değiştirme, hız ve zaman",
+                "Konum-zaman, hız-zaman ve ivme-zaman grafikleri",
+                "Serbest düşme hareketinin matematiksel hesaplamaları"
+              ]
+            },
+            {
+              name: "İki boyutta sabit ivmeli hareket",
+              topics: [
+                "Hareketin yatay ve düşey bileşenleri",
+                "Vektörleri bileşenlerine ayırma",
+                "Bileşenler üzerinden hız, ivme ve yer değiştirme hesaplamaları",
+                "İki boyutlu hareketin grafiklerle ve matematiksel modellerle incelenmesi"
+              ]
+            },
+            {
+              name: "Newton'ın hareket yasaları",
+              topics: [
+                "Eylemsizlik",
+                "Kuvvet ve hareket arasındaki ilişki",
+                "Net kuvvet ve ivme",
+                "Etki-tepki kuvvetleri",
+                "Newton'ın hareket yasalarının yorumlanması",
+                "Serbest cisim diyagramları",
+                "Bir cisme etki eden kuvvetlerin belirlenmesi"
+              ]
+            },
+            {
+              name: "Sürtünme kuvveti",
+              topics: [
+                "Statik sürtünme",
+                "Kinetik sürtünme",
+                "Statik ve kinetik sürtünmenin karşılaştırılması",
+                "Sürtünme kuvvetinin bağlı olduğu değişkenler",
+                "Sürtünme kuvvetinin matematiksel modeli",
+                "Sürtünme kuvvetiyle ilgili hesaplamalar ve grafikler"
+              ]
+            },
+            {
+              name: "Limit hız",
+              topics: [
+                "Hava direnci ve sürtünme ilişkisi",
+                "Limit hız kavramı",
+                "Limit hızı etkileyen değişkenler"
+              ]
+            },
+            {
+              name: "Çembersel hareket",
+              topics: [
+                "Düzgün çembersel hareket",
+                "Çembersel yörünge ve yarıçap",
+                "Çizgisel sürat ve çizgisel hız",
+                "Açısal hız",
+                "Periyot ve frekansla ilişkiler",
+                "Merkezcil ivme",
+                "Merkezcil kuvvet",
+                "Açısal ivme kavramı"
+              ]
+            }
+          ]
+        },
+        {
+          name: "2. Ünite — Elektrik ve Manyetizma",
+          sections: [
+            {
+              name: "Elektriksel kuvvet ve elektriksel alan",
+              topics: [
+                "Elektriksel kuvvet",
+                "Elektriksel alan",
+                "Elektrik yükleri arasındaki etkileşimler",
+                "Elektrik alanın yönü ve özellikleri"
+              ]
+            },
+            {
+              name: "Manyetik alan ve manyetik kuvvet",
+              topics: [
+                "Manyetik alan",
+                "Manyetik kuvvet",
+                "Manyetik alanın özellikleri",
+                "Manyetik akı",
+                "Elektrik ve manyetizma arasındaki ilişkiler"
+              ]
+            },
+            {
+              name: "İndüksiyon akımı",
+              topics: [
+                "Elektromanyetik indüksiyon",
+                "İndüksiyon akımı",
+                "İndüksiyon gerilimi",
+                "Manyetik akı değişimi ile indüksiyon arasındaki ilişki",
+                "İndüksiyon sonucu oluşan alternatif akım"
+              ]
+            },
+            {
+              name: "Transformatörler",
+              topics: [
+                "Transformatörün yapısı",
+                "Transformatörlerin çalışma ilkesi",
+                "Transformatörlerin kullanım alanları"
+              ]
+            }
+          ]
+        },
+        {
+          name: "3. Ünite — Optik",
+          sections: [
+            {
+              name: "Işık ve aydınlanma",
+              topics: [
+                "Işık şiddeti",
+                "Işık akısı",
+                "Aydınlanma",
+                "Bu nicelikler arasındaki ilişkiler"
+              ]
+            },
+            {
+              name: "Aynalar",
+              topics: [
+                "Düzlem aynalar",
+                "Küresel aynalar",
+                "Aynalarda ışığın yansıması",
+                "Görüntü oluşumu ve görüntü özellikleri"
+              ]
+            },
+            {
+              name: "Kırılma ve görünür derinlik",
+              topics: [
+                "Işığın farklı ortamlarda kırılması",
+                "Kırılma indisi",
+                "Snell yasası",
+                "Tam yansıma",
+                "Sınır açısı",
+                "Görünür derinlik"
+              ]
+            },
+            {
+              name: "Fiber optik",
+              topics: [
+                "Fiber optiğin çalışma prensibi",
+                "Tam yansımanın fiber optikteki rolü",
+                "Fiber optiğin kullanım alanları"
+              ]
+            },
+            {
+              name: "Prizmalar",
+              topics: [
+                "Prizmalarda ışığın kırılması",
+                "Tek renkli ışığın izlediği yol",
+                "Birleşik prizma sistemleri"
+              ]
+            },
+            {
+              name: "Mercekler",
+              topics: [
+                "Yakınsak mercekler",
+                "Iraksak mercekler",
+                "Merceklerin fiziksel özellikleri",
+                "Merceklerde ışınların izlediği yollar",
+                "Merceklerde görüntü oluşumu",
+                "Görüntü özelliklerinin deney ve çizimlerle incelenmesi"
+              ]
+            }
+          ]
+        }
+      ],
+      "Kimya": [
+        {
+          name: "1. Tema — Etkileşim",
+          sections: [
+            {
+              name: "Enerji ve kimyasal tepkimeler",
+              topics: [
+                "Fiziksel olaylarda enerji değişimi",
+                "Kimyasal olaylarda enerji değişimi",
+                "Endotermik değişimler",
+                "Ekzotermik değişimler",
+                "Maddelerin enerji kaynağı olma potansiyeli",
+                "Yanma tepkimeleri",
+                "Kimyasal bağların kırılması ve oluşması",
+                "Bağ enerjileri",
+                "Bağ enerjileri kullanılarak tepkime entalpisi hesaplama",
+                "Standart oluşum entalpileri",
+                "Standart tepkime entalpisi hesaplamaları"
+              ]
+            },
+            {
+              name: "Kimyasal tepkimelerde hız",
+              topics: [
+                "Kimyasal tepkimelerin gerçekleşme koşulları",
+                "Çarpışma teorisi",
+                "Etkin çarpışma",
+                "Aktivasyon enerjisi",
+                "Tepken ve ürün derişimlerinin zamanla değişimi",
+                "Ortalama tepkime hızı",
+                "Derişim-zaman grafikleri",
+                "Tepkime hızının zamanla değişimi",
+                "Tepken cinsinin tepkime hızına etkisi",
+                "Maddelerin fiziksel hâlinin etkisi",
+                "Derişimin etkisi",
+                "Sıcaklığın etkisi",
+                "Katı tepkenin temas yüzeyinin etkisi",
+                "Katalizörün etkisi",
+                "Tek basamaklı tepkimelerde hız denklemi",
+                "Tepkime derecesi",
+                "Hız sabiti"
+              ]
+            }
+          ]
+        },
+        {
+          name: "2. Tema — Çeşitlilik",
+          sections: [
+            {
+              name: "Kimyasal denge",
+              topics: [
+                "Tersinir tepkimelerin özellikleri",
+                "Fiziksel ve kimyasal değişimlerde denge",
+                "Dinamik denge",
+                "Denge sabiti ifadesi",
+                "Tepkime oranı",
+                "Tepkime oranı ile denge sabitinin karşılaştırılması",
+                "Dengeye ulaşma ve denge durumunu yorumlama",
+                "Derişimin dengeye etkisi",
+                "Hacmin dengeye etkisi",
+                "Basıncın dengeye etkisi",
+                "Sıcaklığın dengeye etkisi",
+                "Katalizörün denge sürecine etkisi",
+                "Le Chatelier ilkesi"
+              ]
+            },
+            {
+              name: "Asit ve baz çözeltilerinde denge",
+              topics: [
+                "Suyun otoiyonizasyonu",
+                "Suyun iyonlaşma sabiti",
+                "Arrhenius asit-baz teorisi",
+                "Brønsted–Lowry asit-baz teorisi",
+                "Asit-baz teorilerinin karşılaştırılması",
+                "Eşlenik asit-baz çiftleri",
+                "Asitlerin kuvveti",
+                "Bazların kuvveti",
+                "Kuvvetli ve zayıf asitler",
+                "Kuvvetli ve zayıf bazlar",
+                "İyonlaşma yüzdesi",
+                "Asit ve baz çözeltilerinde pH hesaplamaları",
+                "Kuvvetli asit ve kuvvetli baz çözeltilerinde nötralleşme",
+                "Nötralleşme sırasında pH ve iletkenlik değişimi",
+                "İndikatörler",
+                "Titrasyon",
+                "Kuvvetli asit-kuvvetli baz titrasyonları",
+                "Asidik ve bazik ürünlerin uygunluğunu değerlendirme"
+              ]
+            },
+            {
+              name: "Çözünürlük dengesi",
+              topics: [
+                "Suda az çözünen tuzlar",
+                "Molar çözünürlük",
+                "Çözünürlük çarpımı (Kçç)",
+                "Ortak iyon etkisi",
+                "Sıcaklığın çözünürlüğe etkisi",
+                "Çözünürlük dengesi ile Le Chatelier ilkesinin ilişkisi"
+              ]
+            }
+          ]
+        },
+        {
+          name: "3. Tema — Sürdürülebilirlik",
+          sections: [{
+            name: "Nanoteknoloji ve sürdürülebilirlik",
+            topics: [
+              "Fermantasyon yöntemiyle yeşil hidrojen enerjisi elde edilmesi",
+              "Hidrojen gazı miktarını etkileyen faktörler",
+              "Nanoteknolojik ürünlerin potansiyel faydaları",
+              "Nanoteknolojik ürünlerin olası zararları",
+              "Nanoteknolojinin sağlık, güvenlik ve çevre açısından değerlendirilmesi",
+              "Mikroplastikler",
+              "Nanoplastikler",
+              "Mikroplastik ve nanoplastiklerin çevreye etkileri",
+              "Sağlık ve gıda üzerindeki etkileri",
+              "Enerji, malzeme bilimi, kozmetik ve kişisel bakım alanlarıyla ilişkileri",
+              "Sürdürülebilirlik açısından bilimsel değerlendirme"
+            ]
+          }]
+        }
+      ],
+      "Biyoloji": [
+        {
+          name: "1. Tema — Tepki",
+          sections: [
+            {
+              name: "Canlılık ve tepki",
+              topics: [
+                "Canlıların uyaranlara karşı tepki oluşturması",
+                "Farklı canlıların tepki mekanizmalarının karşılaştırılması",
+                "Uyaran, tepki ve canlı davranışları arasındaki ilişkiler"
+              ]
+            },
+            {
+              name: "Bitkilerde tepki",
+              topics: [
+                "Bitkilerde hormonlar",
+                "Bitkilerde hareket mekanizmaları",
+                "Tropizma hareketleri",
+                "Nasti hareketleri",
+                "Bitkilerde uyaranlara yönelme ve tepki oluşturma"
+              ]
+            },
+            {
+              name: "Hayvanlarda tepki ve sinir sistemi",
+              topics: [
+                "Uyaran çeşitleri",
+                "Reseptörler",
+                "Nöronun yapısı",
+                "Nöronlarda sinyal iletimi",
+                "Sinaps",
+                "Duyu organları",
+                "Uyaranların alınması ve yorumlanması",
+                "Farklı hayvan gruplarında sinir sistemi",
+                "İnsan sinir sisteminin yapısı",
+                "Refleksler",
+                "Sinir sistemi ve tepki arasındaki ilişki"
+              ]
+            },
+            {
+              name: "Uyartıya mekanik tepki",
+              topics: [
+                "Kemiklerin hareket ve destek görevleri",
+                "Eklemler",
+                "Kasların hareketteki rolü",
+                "Kemik ve kasların birlikte çalışması",
+                "Kas kasılmasının kontrolü",
+                "Kasların kasılma mekanizması"
+              ]
+            },
+            {
+              name: "Bağışıklık",
+              topics: [
+                "Doğal bağışıklık",
+                "Kazanılmış bağışıklık",
+                "Aktif bağışıklık",
+                "Pasif bağışıklık",
+                "Bağışıklık tepkilerinin oluşumu",
+                "Alerjik tepkiler",
+                "Alerjinin oluşum mekanizması"
+              ]
+            }
+          ]
+        },
+        {
+          name: "2. Tema — Homeostazi",
+          sections: [
+            {
+              name: "Homeostazi ve canlılar için önemi",
+              topics: [
+                "Homeostazi kavramı",
+                "İç dengenin korunması",
+                "Farklı canlı türlerinde homeostatik yapılar",
+                "Homeostatik süreçler",
+                "Pozitif geri bildirim",
+                "Negatif geri bildirim"
+              ]
+            },
+            {
+              name: "Sistemler ve homeostazi",
+              topics: [
+                "Sinir sistemi ve homeostazi",
+                "Endokrin sistem ve homeostazi",
+                "Dolaşım sistemi ve homeostazi",
+                "Solunum sistemi ve homeostazi",
+                "Boşaltım sistemi ve homeostazi",
+                "Organ sistemlerinin eş güdümlü çalışması",
+                "Su dengesi",
+                "Isı dengesi",
+                "Enerji dengesi",
+                "Elektrolit dengesi",
+                "pH dengesi",
+                "Kan basıncı dengesi"
+              ]
+            },
+            {
+              name: "Homeostazinin bozulması",
+              topics: [
+                "Homeostazinin sağlanamadığı durumlar",
+                "Diabetes mellitus",
+                "Diabetes insipidus",
+                "Kan basıncı anormallikleri",
+                "Obezite",
+                "İç dengenin bozulmasıyla sağlık sorunları arasındaki ilişkiler"
+              ]
+            }
+          ]
+        }
+      ]
+    };
+    const storageKey = "ders-kaynak-takip-v1";
+    const app = document.querySelector("#app");
+    const navigation = document.querySelector("#navigation");
+    const status = document.querySelector("#status");
+    const today = document.querySelector("#today");
+    const themePicker = document.querySelector("#themePicker");
+    const availableThemes = ["midnight", "light", "ocean", "forest"];
+    const current = new Date();
+    today.dateTime = getLocalDateKey(current);
+    today.textContent = new Intl.DateTimeFormat("tr-TR", {
+      weekday: "long", day: "numeric", month: "long", year: "numeric"
+    }).format(current);
+    let selected = { grade: grades[0], subject: subjectsByGrade[grades[0]][0] };
+    let expandedGrade = grades[0];
+    let currentPage = "course";
+    let editingResourceId = null;
+    const expandedThemes = new Set();
+    let data = loadData();
+
+    function applyTheme(theme) {
+      const selectedTheme = availableThemes.includes(theme) ? theme : "midnight";
+      document.documentElement.dataset.theme = selectedTheme;
+      themePicker.value = selectedTheme;
+      document.querySelector('meta[name="theme-color"]').content =
+        getComputedStyle(document.documentElement).getPropertyValue("--bg").trim();
+      return selectedTheme;
+    }
+
+    function getLocalDateKey(date = new Date()) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    }
+
+    function loadData() {
+      const saved = localStorage.getItem(storageKey);
+      if (!saved) return {};
+      try {
+        const parsed = JSON.parse(saved);
+        return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
+      } catch (error) {
+        status.textContent = "Kayıtlı bilgiler okunamadı. Yeni eklediklerin kaydedilmeye devam edecek.";
+        console.error("Kayıtlı ders takip verisi okunamadı:", error);
+        return {};
+      }
+    }
+
+    function makeId() {
+      return globalThis.crypto && typeof crypto.randomUUID === "function"
+        ? crypto.randomUUID()
+        : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    }
+
+    function getSubjectData(grade, subject) {
+      if (!data[grade] || typeof data[grade] !== "object") data[grade] = {};
+      const saved = data[grade][subject];
+      if (!saved || typeof saved !== "object") {
+        data[grade][subject] = { resources: [], topics: [], checks: {}, sessions: [] };
+      } else {
+        if (!Array.isArray(saved.resources)) saved.resources = [];
+        if (!Array.isArray(saved.topics)) saved.topics = [];
+        if (!saved.checks || typeof saved.checks !== "object") saved.checks = {};
+        if (!Array.isArray(saved.sessions)) saved.sessions = [];
+      }
+      return data[grade][subject];
+    }
+
+    function getCourseThemes(grade, subject) {
+      if (grade === "TYT") return tytSyllabusBySubject[subject] || [];
+      return grade === "11. Sınıf" ? syllabusBySubject[subject] || [] : [];
+    }
+
+    function getCourseTopics(themes, grade) {
+      const idPrefix = grade === "TYT" ? "tyt" : "11";
+      return themes.flatMap((theme, themeIndex) =>
+        theme.sections.flatMap((section, sectionIndex) =>
+          section.topics.map((name, topicIndex) => ({
+            id: `${idPrefix}-${themeIndex}-${sectionIndex}-${topicIndex}`,
+            name,
+            themeIndex,
+            sectionIndex
+          }))
+        )
+      );
+    }
+
+    function migrateTurkishCourseName() {
+      const gradeData = data.TYT;
+      if (!gradeData || !gradeData["Türkçe ve Edebiyat"]) return;
+
+      const legacy = gradeData["Türkçe ve Edebiyat"];
+      const current = gradeData["Türkçe"];
+      if (!current) {
+        gradeData["Türkçe"] = legacy;
+      } else {
+        const legacyResources = Array.isArray(legacy.resources) ? legacy.resources : [];
+        const currentResources = Array.isArray(current.resources) ? current.resources : [];
+        const currentResourceIds = new Set(currentResources.map((resource) => resource.id));
+        current.resources = [
+          ...legacyResources.filter((resource) => !currentResourceIds.has(resource.id)),
+          ...currentResources
+        ];
+
+        const legacySessions = Array.isArray(legacy.sessions) ? legacy.sessions : [];
+        const currentSessions = Array.isArray(current.sessions) ? current.sessions : [];
+        const currentSessionIds = new Set(currentSessions.map((session) => session.id));
+        current.sessions = [
+          ...legacySessions.filter((session) => !currentSessionIds.has(session.id)),
+          ...currentSessions
+        ];
+
+        const legacyChecks = legacy.checks && typeof legacy.checks === "object" ? legacy.checks : {};
+        const currentChecks = current.checks && typeof current.checks === "object" ? current.checks : {};
+        current.checks = { ...legacyChecks };
+        for (const [topicId, checks] of Object.entries(currentChecks)) {
+          current.checks[topicId] = {
+            ...(legacyChecks[topicId] && typeof legacyChecks[topicId] === "object"
+              ? legacyChecks[topicId]
+              : {}),
+            ...(checks && typeof checks === "object" ? checks : {})
+          };
+        }
+      }
+      delete gradeData["Türkçe ve Edebiyat"];
+    }
+
+    function initializeSyllabus() {
+      if (!data.settings || typeof data.settings !== "object") data.settings = {};
+      data.settings.theme = applyTheme(data.settings.theme);
+      if (!Number.isInteger(data.settings.dailyGoalMinutes) ||
+          data.settings.dailyGoalMinutes < 15 || data.settings.dailyGoalMinutes > 1440) {
+        data.settings.dailyGoalMinutes = 120;
+      }
+      migrateTurkishCourseName();
+      for (const [grade, syllabus] of Object.entries({
+        "TYT": tytSyllabusBySubject,
+        "11. Sınıf": syllabusBySubject
+      })) {
+        for (const [subject, themes] of Object.entries(syllabus)) {
+          const subjectData = getSubjectData(grade, subject);
+          const oldTopics = subjectData.topics;
+          const oldChecks = subjectData.checks;
+          const catalogTopics = getCourseTopics(themes, grade);
+
+          for (const [themeIndex, theme] of themes.entries()) {
+            const oldTheme = oldTopics.find((topic) =>
+              topic && typeof topic.name === "string" && topic.name === theme.name
+            );
+            if (!oldTheme) continue;
+            for (const resource of subjectData.resources) {
+              if (!oldChecks[oldTheme.id]?.[resource.id]) continue;
+              for (const topic of catalogTopics) {
+                if (topic.themeIndex !== themeIndex) continue;
+                if (!subjectData.checks[topic.id]) subjectData.checks[topic.id] = {};
+                subjectData.checks[topic.id][resource.id] = true;
+              }
+            }
+          }
+
+          subjectData.topics = catalogTopics.map(({ id, name }) => ({ id, name }));
+        }
+      }
+      saveData();
+    }
+
+    function saveData() {
+      try {
+        localStorage.setItem(storageKey, JSON.stringify(data));
+        status.textContent = "";
+      } catch (error) {
+        status.textContent = "Bilgiler kaydedilemedi. Tarayıcının depolama alanını kontrol et.";
+        console.error("Ders takip verisi kaydedilemedi:", error);
+      }
+    }
+
+    themePicker.addEventListener("change", () => {
+      if (!availableThemes.includes(themePicker.value)) {
+        status.textContent = "Bu tema kullanılamıyor.";
+        applyTheme(data.settings.theme);
+        return;
+      }
+      data.settings.theme = applyTheme(themePicker.value);
+      saveData();
+    });
+
+    function element(tag, className, text) {
+      const node = document.createElement(tag);
+      if (className) node.className = className;
+      if (text !== undefined) node.textContent = text;
+      return node;
+    }
+
+    function button(text, className, onClick, label) {
+      const node = element("button", className, text);
+      node.type = "button";
+      if (label) node.setAttribute("aria-label", label);
+      node.addEventListener("click", onClick);
+      return node;
+    }
+
+    function renderNavigation() {
+      navigation.replaceChildren();
+      for (const grade of grades) {
+        const gradeButton = button(
+          grade,
+          "grade-button",
+          () => {
+            expandedGrade = expandedGrade === grade ? "" : grade;
+            render();
+          }
+        );
+        gradeButton.setAttribute("aria-expanded", String(expandedGrade === grade));
+        gradeButton.append(element("span", "grade-chevron", expandedGrade === grade ? "▾" : "▸"));
+        navigation.append(gradeButton);
+      }
+      if (expandedGrade) {
+        const list = element("div", "subject-list");
+        for (const subject of subjectsByGrade[expandedGrade]) {
+          const subjectButton = button(subject, "subject-button", () => {
+            selected = { grade: expandedGrade, subject };
+            currentPage = "course";
+            editingResourceId = null;
+            render();
+          });
+          if (selected.grade === expandedGrade && selected.subject === subject) {
+            subjectButton.setAttribute("aria-current", "page");
+          }
+          list.append(subjectButton);
+        }
+        navigation.append(list);
+      }
+      const agendaButton = button("◷  Ajanda", "agenda-nav-button", () => {
+        currentPage = "agenda";
+        editingResourceId = null;
+        render();
+      });
+      if (currentPage === "agenda") agendaButton.setAttribute("aria-current", "page");
+      navigation.append(agendaButton);
+    }
+
+    function getProgress(subjectData, themes, grade) {
+      const topics = getCourseTopics(themes, grade);
+      let total = 0;
+      let completed = 0;
+      for (const topic of topics) {
+        for (const resource of subjectData.resources) {
+          total += 1;
+          if (subjectData.checks[topic.id]?.[resource.id]) completed += 1;
+        }
+      }
+      return { total, completed, percent: total ? Math.round(completed / total * 100) : 0 };
+    }
+
+    function renderDashboard(subjectData) {
+      const themes = getCourseThemes(selected.grade, selected.subject);
+      const topics = getCourseTopics(themes, selected.grade);
+      const progress = getProgress(subjectData, themes, selected.grade);
+      const heading = element("div", "page-heading");
+      const titleBlock = element("div");
+      titleBlock.append(
+        element("p", "eyebrow", selected.grade),
+        element("h2", "", selected.subject),
+        element("p", "heading-note", "Ders planın ve çalışma ilerlemen")
+      );
+      heading.append(titleBlock);
+      app.append(heading);
+
+      const stats = element("section", "stats");
+      stats.setAttribute("aria-label", "Ders özeti");
+      const progressCard = element("article", "stat-card");
+      progressCard.append(
+        element("span", "stat-label", "Genel ilerleme"),
+        element("strong", "stat-value", `${progress.percent}%`)
+      );
+      const track = element("div", "progress-track");
+      const fill = element("div", "progress-fill");
+      fill.style.width = `${progress.percent}%`;
+      track.append(fill);
+      progressCard.append(track);
+      stats.append(
+        progressCard,
+        makeStat("Konular", topics.length),
+        makeStat("Kaynaklar", subjectData.resources.length),
+        makeStat("Toplam çalışma süresi", formatMinutes(getTotalStudyMinutes()))
+      );
+      app.append(stats);
+      app.append(renderDailyGoal());
+      return progress;
+    }
+
+    function getTodayStudyMinutes() {
+      const todayKey = getLocalDateKey();
+      let total = 0;
+      for (const grade of grades) {
+        for (const subject of subjectsByGrade[grade]) {
+          const sessions = data[grade]?.[subject]?.sessions;
+          if (!Array.isArray(sessions)) continue;
+          total += sessions.reduce((sum, session) =>
+            sum + (session.date === todayKey ? Number(session.minutes) || 0 : 0), 0
+          );
+        }
+      }
+      return total;
+    }
+
+    function renderDailyGoal() {
+      const goal = data.settings.dailyGoalMinutes;
+      const studied = getTodayStudyMinutes();
+      const percent = Math.min(100, Math.round(studied / goal * 100));
+      const card = element("section", "goal-card");
+      const summary = element("div");
+      summary.append(
+        element("p", "goal-title", "Bugünkü çalışma hedefin"),
+        element("p", "goal-summary", `${formatMinutes(studied)} çalıştın · ${formatMinutes(goal)} hedef${studied >= goal ? " — hedef tamamlandı, harika!" : ""}`)
+      );
+      const track = element("div", "goal-track");
+      const fill = element("div", "progress-fill");
+      fill.style.width = `${percent}%`;
+      track.append(fill);
+      summary.append(track);
+
+      const form = element("form", "goal-form");
+      const label = element("label", "", "Günlük hedef");
+      const input = element("input");
+      input.type = "number";
+      input.min = "15";
+      input.max = "1440";
+      input.step = "15";
+      input.value = String(goal);
+      input.setAttribute("aria-label", "Günlük çalışma hedefi dakika olarak");
+      label.append(input, document.createTextNode(" dk"));
+      const saveButton = element("button", "secondary-button", "Kaydet");
+      saveButton.type = "submit";
+      form.append(label, saveButton);
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const nextGoal = Number(input.value);
+        if (!Number.isInteger(nextGoal) || nextGoal < 15 || nextGoal > 1440) {
+          status.textContent = "Günlük hedef 15 ile 1440 dakika arasında olmalı.";
+          return;
+        }
+        data.settings.dailyGoalMinutes = nextGoal;
+        saveData();
+        render();
+      });
+      card.append(summary, form);
+      return card;
+    }
+
+    function makeStat(label, value) {
+      const card = element("article", "stat-card");
+      card.append(element("span", "stat-label", label), element("strong", "stat-value", String(value)));
+      return card;
+    }
+
+    function formatMinutes(minutes) {
+      const hours = Math.floor(minutes / 60);
+      const remainder = minutes % 60;
+      if (hours && remainder) return `${hours} sa ${remainder} dk`;
+      if (hours) return `${hours} sa`;
+      return `${remainder} dk`;
+    }
+
+    function renderResources(subjectData) {
+      const panel = element("section", "panel");
+      const heading = element("div", "panel-heading");
+      heading.append(element("h3", "", "Kaynaklar"), element("span", "muted", `${subjectData.resources.length} kaynak`));
+      panel.append(heading);
+      const form = createAddForm(
+        "Kaynak adlarını virgülle ayır: Örn. 3D, Bilgi Sarmal, Orijinal",
+        "Kaynakları ekle",
+        (value) => {
+          const existingNames = new Set(
+            subjectData.resources.map((item) => item.name.toLocaleLowerCase("tr"))
+          );
+          const names = value.split(",").map((name) => name.trim()).filter(Boolean);
+          const additions = [];
+          let duplicateCount = 0;
+          let tooLongCount = 0;
+          for (const name of names) {
+            if (name.length > 100) {
+              tooLongCount += 1;
+              continue;
+            }
+            const normalizedName = name.toLocaleLowerCase("tr");
+            if (existingNames.has(normalizedName)) {
+              duplicateCount += 1;
+              continue;
+            }
+            existingNames.add(normalizedName);
+            additions.push({ id: makeId(), name });
+          }
+          if (!names.length) {
+            status.textContent = "Eklemek için en az bir kaynak adı yaz.";
+            return;
+          }
+          if (!additions.length) {
+            const reasons = [];
+            if (duplicateCount) reasons.push(`${duplicateCount} kaynak zaten ekliydi`);
+            if (tooLongCount) reasons.push(`${tooLongCount} ad 100 karakter sınırını aşıyor`);
+            status.textContent = reasons.join("; ") + ".";
+            return;
+          }
+          subjectData.resources.push(...additions);
+          saveData();
+          render();
+          const messages = [`${additions.length} kaynak eklendi`];
+          if (duplicateCount) messages.push(`${duplicateCount} tekrar eden ad atlandı`);
+          if (tooLongCount) messages.push(`${tooLongCount} ad 100 karakteri aştığı için atlandı`);
+          status.textContent = `${messages.join("; ")}.`;
+        },
+        1000
+      );
+      panel.append(form);
+      if (!subjectData.resources.length) {
+        panel.append(element("p", "empty", "Dersini takip etmeye başlamak için ilk kaynağını ekle."));
+      } else {
+        const list = element("div", "resource-list");
+        for (const resource of subjectData.resources) {
+          if (editingResourceId === resource.id) {
+            const editForm = element("form", "resource-edit-form");
+            const editInput = element("input");
+            editInput.type = "text";
+            editInput.value = resource.name;
+            editInput.maxLength = 100;
+            editInput.required = true;
+            editInput.setAttribute("aria-label", `${resource.name} kaynak adını düzenle`);
+            const saveButton = button("✓", "icon-button", () => {}, "Kaynak adını kaydet");
+            saveButton.type = "submit";
+            const cancelButton = button("×", "icon-button", () => {
+              editingResourceId = null;
+              render();
+            }, "Düzenlemeyi iptal et");
+            editForm.append(editInput, saveButton, cancelButton);
+            editForm.addEventListener("submit", (event) => {
+              event.preventDefault();
+              const nextName = editInput.value.trim();
+              if (!nextName) {
+                status.textContent = "Kaynak adı boş bırakılamaz.";
+                return;
+              }
+              if (subjectData.resources.some((item) =>
+                item.id !== resource.id &&
+                item.name.toLocaleLowerCase("tr") === nextName.toLocaleLowerCase("tr")
+              )) {
+                status.textContent = "Bu isimde başka bir kaynak zaten var.";
+                return;
+              }
+              resource.name = nextName;
+              editingResourceId = null;
+              saveData();
+              render();
+            });
+            const chip = element("div", "resource-chip");
+            chip.append(editForm);
+            list.append(chip);
+            continue;
+          }
+          const chip = element("span", "resource-chip");
+          chip.append(element("span", "resource-name", resource.name));
+          const actions = element("span", "resource-actions");
+          actions.append(button("✎", "icon-button", () => {
+            editingResourceId = resource.id;
+            render();
+            const input = app.querySelector(".resource-edit-form input");
+            input?.focus();
+            input?.select();
+          }, `${resource.name} kaynağını düzenle`));
+          actions.append(button("×", "icon-button", () => {
+            if (!confirm(`“${resource.name}” kaynağını ve bu kaynağa ait işaretlemeleri silmek istiyor musun?`)) return;
+            subjectData.resources = subjectData.resources.filter((item) => item.id !== resource.id);
+            for (const checks of Object.values(subjectData.checks)) delete checks[resource.id];
+            saveData();
+            render();
+          }, `${resource.name} kaynağını sil`));
+          chip.append(actions);
+          list.append(chip);
+        }
+        panel.append(list);
+      }
+      return panel;
+    }
+
+    function renderTopics(subjectData) {
+      const panel = element("section", "panel");
+      const heading = element("div", "panel-heading");
+      const themes = getCourseThemes(selected.grade, selected.subject);
+      const topics = getCourseTopics(themes, selected.grade);
+      const headingContent = element("div");
+      headingContent.append(
+        element("h3", "", "Kaynaklara göre konu takibi"),
+        element("p", "empty", topics.length
+          ? "Bir temaya tıklayarak alt konuları aç; kaynak sütunlarında tamamladıklarını işaretle."
+          : "Bu ders için konu listesi henüz eklenmedi. Burada yalnızca kaynak ekleyebilirsin.")
+      );
+      heading.append(headingContent);
+      if (topics.length) heading.append(element("span", "topic-count", `${topics.length} konu`));
+      panel.append(heading);
+      if (topics.length) panel.append(createProgressTable(subjectData, themes, selected.grade));
+      return panel;
+    }
+
+    function createProgressTable(subjectData, themes, grade) {
+      const wrap = element("div", "table-wrap");
+      const table = element("table");
+      const head = element("thead");
+      const header = element("tr");
+      header.append(element("th", "", "Konu"));
+      for (const resource of subjectData.resources) header.append(element("th", "", resource.name));
+      head.append(header);
+      table.append(head);
+      const body = element("tbody");
+
+      for (const [themeIndex, theme] of themes.entries()) {
+        const themeTopics = theme.sections.flatMap((section, sectionIndex) =>
+          section.topics.map((name, topicIndex) => ({
+            id: `${grade === "TYT" ? "tyt" : "11"}-${themeIndex}-${sectionIndex}-${topicIndex}`,
+            name
+          }))
+        );
+        const completed = themeTopics.reduce((count, topic) =>
+          count + subjectData.resources.filter((resource) =>
+            subjectData.checks[topic.id]?.[resource.id]
+          ).length, 0);
+        const themeTotal = themeTopics.length * subjectData.resources.length;
+        const isExpanded = expandedThemes.has(`${grade}:${selected.subject}:${themeIndex}`);
+        const themeRow = element("tr", "theme-row");
+        const themeCell = element("td");
+        themeCell.colSpan = subjectData.resources.length + 1;
+        const themeButton = button("", "theme-toggle", () => {
+          const key = `${grade}:${selected.subject}:${themeIndex}`;
+          if (expandedThemes.has(key)) expandedThemes.delete(key);
+          else expandedThemes.add(key);
+          render();
+        });
+        const themeName = element("span", "theme-name");
+        themeName.append(
+          element("span", "theme-chevron", isExpanded ? "▾" : "▸"),
+          document.createTextNode(theme.name)
+        );
+        themeButton.append(
+          themeName,
+          element("span", "theme-progress", `${completed}/${themeTotal} kutu`)
+        );
+        themeCell.append(themeButton);
+        themeRow.append(themeCell);
+        body.append(themeRow);
+
+        if (!isExpanded) continue;
+        for (const [sectionIndex, section] of theme.sections.entries()) {
+          const sectionRow = element("tr", "section-row");
+          const sectionCell = element("td", "", section.name);
+          sectionCell.colSpan = subjectData.resources.length + 1;
+          sectionRow.append(sectionCell);
+          body.append(sectionRow);
+
+          for (const [topicIndex, topicName] of section.topics.entries()) {
+            const topic = {
+              id: `${grade === "TYT" ? "tyt" : "11"}-${themeIndex}-${sectionIndex}-${topicIndex}`,
+              name: topicName
+            };
+            const row = element("tr", "topic-row");
+            row.append(element("td", "", topic.name));
+            for (const resource of subjectData.resources) {
+              const cell = element("td");
+              const checkbox = element("input");
+              checkbox.type = "checkbox";
+              checkbox.checked = Boolean(subjectData.checks[topic.id]?.[resource.id]);
+              checkbox.setAttribute("aria-label", `${topic.name} — ${resource.name} tamamlandı`);
+              checkbox.addEventListener("change", () => {
+                if (!subjectData.checks[topic.id]) subjectData.checks[topic.id] = {};
+                subjectData.checks[topic.id][resource.id] = checkbox.checked;
+                saveData();
+                render();
+              });
+              cell.append(checkbox);
+              row.append(cell);
+            }
+            body.append(row);
+          }
+        }
+      }
+      table.append(body);
+      wrap.append(table);
+      if (!subjectData.resources.length) {
+        const container = element("div");
+        container.append(wrap, element("p", "empty", "Tabloda kaynak sütunlarının oluşması için önce kaynak ekle."));
+        return container;
+      }
+      return wrap;
+    }
+
+    function getTotalStudyMinutes() {
+      let total = 0;
+      for (const grade of grades) {
+        for (const subject of subjectsByGrade[grade]) {
+          const sessions = data[grade]?.[subject]?.sessions;
+          if (Array.isArray(sessions)) {
+            total += sessions.reduce((sum, session) => sum + (Number(session.minutes) || 0), 0);
+          }
+        }
+      }
+      return total;
+    }
+
+    function getAllAgendaEntries() {
+      const entries = [];
+      for (const grade of grades) {
+        for (const subject of subjectsByGrade[grade]) {
+          const subjectData = getSubjectData(grade, subject);
+          for (const session of subjectData.sessions) {
+            entries.push({ grade, subject, subjectData, session });
+          }
+        }
+      }
+      return entries.sort((a, b) => b.session.date.localeCompare(a.session.date));
+    }
+
+    function renderAgendaPage() {
+      const entries = getAllAgendaEntries();
+      const heading = element("div", "page-heading");
+      const titleBlock = element("div");
+      titleBlock.append(
+        element("p", "eyebrow", "Planlama"),
+        element("h2", "", "Ajanda"),
+        element("p", "heading-note", "Tüm derslerde yaptıklarını ve çalışma sürelerini tek yerden takip et.")
+      );
+      heading.append(titleBlock);
+      app.append(heading);
+
+      const stats = element("section", "stats");
+      stats.setAttribute("aria-label", "Ajanda özeti");
+      stats.append(
+        makeStat("Toplam etkinlik", entries.length),
+        makeStat("Toplam çalışma süresi", formatMinutes(getTotalStudyMinutes())),
+        makeStat("Ders", grades.reduce((count, grade) => count + subjectsByGrade[grade].length, 0)),
+        makeStat("Video", entries.filter(({ session }) => Boolean(session.videoUrl)).length)
+      );
+      app.append(stats);
+
+      const workspace = element("div", "workspace");
+      const formPanel = element("section", "panel");
+      formPanel.append(element("h3", "", "Ajandaya kayıt ekle"));
+      const form = element("form", "agenda-form");
+      const subjectRow = element("div", "form-row");
+      const gradeLabel = element("label", "", "Kademe");
+      const gradeSelect = element("select");
+      for (const grade of grades) {
+        const option = element("option", "", grade);
+        option.value = grade;
+        gradeSelect.append(option);
+      }
+      gradeLabel.append(gradeSelect);
+      const subjectLabel = element("label", "", "Ders");
+      const subjectSelect = element("select");
+      const fillSubjects = () => {
+        subjectSelect.replaceChildren();
+        for (const subject of subjectsByGrade[gradeSelect.value]) {
+          const option = element("option", "", subject);
+          option.value = subject;
+          subjectSelect.append(option);
+        }
+      };
+      gradeSelect.addEventListener("change", fillSubjects);
+      fillSubjects();
+      subjectLabel.append(subjectSelect);
+      subjectRow.append(gradeLabel, subjectLabel);
+
+      const activityLabel = element("label", "", "Yaptığın çalışma");
+      const activityInput = element("input");
+      activityInput.type = "text";
+      activityInput.placeholder = "Örn. Problemlerden 30 soru çözdüm";
+      activityInput.maxLength = 180;
+      activityInput.required = true;
+      activityLabel.append(activityInput);
+
+      const videoLabel = element("label", "", "YouTube video bağlantısı (isteğe bağlı)");
+      const videoInput = element("input");
+      videoInput.type = "url";
+      videoInput.placeholder = "https://www.youtube.com/watch?v=...";
+      videoInput.autocomplete = "url";
+      videoInput.addEventListener("change", async () => {
+        const url = videoInput.value.trim();
+        if (!url) return;
+        try {
+          activityInput.value = await fetchYouTubeTitle(url);
+          status.textContent = "Video başlığı bulundu; eklemeden önce istersen düzenleyebilirsin.";
+        } catch (error) {
+          status.textContent = error.message;
+        }
+      });
+      videoLabel.append(videoInput);
+
+      const row = element("div", "form-row");
+      const dateLabel = element("label", "", "Tarih");
+      const dateInput = element("input");
+      dateInput.type = "date";
+      dateInput.value = getLocalDateKey();
+      dateInput.required = true;
+      dateLabel.append(dateInput);
+      const durationLabel = element("label", "", "Süre (dakika)");
+      const durationInput = element("input");
+      durationInput.type = "number";
+      durationInput.min = "1";
+      durationInput.max = "1440";
+      durationInput.value = "45";
+      durationInput.required = true;
+      durationLabel.append(durationInput);
+      row.append(dateLabel, durationLabel);
+      const submit = element("button", "primary-button", "Ajandaya ekle");
+      submit.type = "submit";
+      form.append(subjectRow, activityLabel, videoLabel, row, submit);
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const minutes = Number(durationInput.value);
+        if (!Number.isInteger(minutes) || minutes < 1 || minutes > 1440) {
+          status.textContent = "Etkinlik süresi 1 ile 1440 dakika arasında tam sayı olmalı.";
+          return;
+        }
+        const videoUrl = videoInput.value.trim();
+        let title = activityInput.value.trim();
+        if (videoUrl) {
+          submit.disabled = true;
+          submit.textContent = "Video başlığı alınıyor…";
+          try {
+            title = await fetchYouTubeTitle(videoUrl);
+          } catch (error) {
+            status.textContent = error.message;
+            submit.disabled = false;
+            submit.textContent = "Ajandaya ekle";
+            return;
+          }
+        }
+        if (!title) {
+          status.textContent = "Yaptığın çalışmayı yaz veya video bağlantısı ekle.";
+          submit.disabled = false;
+          submit.textContent = "Ajandaya ekle";
+          return;
+        }
+        const subjectData = getSubjectData(gradeSelect.value, subjectSelect.value);
+        subjectData.sessions.push({
+          id: makeId(), topic: title, date: dateInput.value, minutes, videoUrl
+        });
+        saveData();
+        render();
+      });
+      formPanel.append(form);
+
+      const entriesPanel = element("section", "panel");
+      const listHeading = element("div", "panel-heading");
+      listHeading.append(element("h3", "", "Yaptıklarım"), element("span", "muted", `${entries.length} kayıt`));
+      entriesPanel.append(listHeading);
+      const list = element("div", "agenda-list");
+      if (!entries.length) {
+        list.append(element("p", "empty", "Henüz ajanda kaydı yok. İlk çalışmanı yukarıdan ekleyebilirsin."));
+      } else {
+        for (const { grade, subject, subjectData, session } of entries) {
+          const item = element("article", "agenda-item");
+          const details = element("div");
+          details.append(element("p", "agenda-title", session.topic));
+          const dateText = new Intl.DateTimeFormat("tr-TR", {
+            day: "numeric", month: "short", year: "numeric"
+          }).format(new Date(`${session.date}T12:00:00`));
+          details.append(element("p", "agenda-meta", `${grade} · ${subject} · ${dateText}`));
+          if (session.videoUrl) {
+            const videoLink = element("a", "agenda-video", "Videoyu aç");
+            videoLink.href = session.videoUrl;
+            videoLink.target = "_blank";
+            videoLink.rel = "noopener noreferrer";
+            details.append(videoLink);
+          }
+          const duration = element("input", "agenda-duration");
+          duration.type = "number";
+          duration.min = "1";
+          duration.max = "1440";
+          duration.value = String(session.minutes);
+          duration.setAttribute("aria-label", `${session.topic} çalışma süresi (dakika)`);
+          duration.addEventListener("change", () => {
+            const updatedMinutes = Number(duration.value);
+            if (!Number.isInteger(updatedMinutes) || updatedMinutes < 1 || updatedMinutes > 1440) {
+              status.textContent = "Etkinlik süresi 1 ile 1440 dakika arasında tam sayı olmalı.";
+              duration.value = String(session.minutes);
+              return;
+            }
+            session.minutes = updatedMinutes;
+            saveData();
+            render();
+          });
+          item.append(details, duration);
+          item.append(button("×", "icon-button", () => {
+            if (!confirm("Bu ajanda kaydını silmek istiyor musun?")) return;
+            subjectData.sessions = subjectData.sessions.filter((entry) => entry.id !== session.id);
+            saveData();
+            render();
+          }, "Ajanda kaydını sil"));
+          list.append(item);
+        }
+      }
+      entriesPanel.append(list);
+
+      const column = element("div", "main-column");
+      column.append(formPanel, entriesPanel);
+      workspace.append(column);
+      app.append(workspace);
+    }
+
+    async function fetchYouTubeTitle(value) {
+      let videoUrl;
+      try {
+        videoUrl = new URL(value);
+      } catch {
+        throw new Error("Geçerli bir YouTube video bağlantısı gir.");
+      }
+      const host = videoUrl.hostname.toLowerCase();
+      const isYouTube = [
+        "youtube.com", "www.youtube.com", "m.youtube.com", "youtu.be",
+        "www.youtu.be", "youtube-nocookie.com", "www.youtube-nocookie.com"
+      ].includes(host);
+      const videoId = host.endsWith("youtu.be")
+        ? videoUrl.pathname.split("/")[1]
+        : videoUrl.searchParams.get("v") || videoUrl.pathname.match(/^\/(?:shorts|embed|live)\/([^/]+)/)?.[1];
+      if (!isYouTube || !videoId || !/^[\w-]{11}$/.test(videoId)) {
+        throw new Error("Geçerli bir YouTube video bağlantısı gir.");
+      }
+      const endpoint = new URL("https://www.youtube.com/oembed");
+      endpoint.searchParams.set("url", videoUrl.href);
+      endpoint.searchParams.set("format", "json");
+      let response;
+      try {
+        response = await fetch(endpoint);
+      } catch (error) {
+        console.error("YouTube video başlığı alınamadı:", error);
+        throw new Error("Video başlığı alınamadı. Bağlantıyı kontrol edip tekrar dene.");
+      }
+      if (!response.ok) {
+        throw new Error("YouTube video başlığı alınamadı. Video herkese açık olmayabilir.");
+      }
+      let metadata;
+      try {
+        metadata = await response.json();
+      } catch (error) {
+        console.error("YouTube video başlık yanıtı çözümlenemedi:", error);
+        throw new Error("YouTube video başlık bilgisi okunamadı.");
+      }
+      if (typeof metadata.title !== "string" || !metadata.title.trim()) {
+        throw new Error("YouTube bu video için başlık bilgisi sağlamadı.");
+      }
+      return metadata.title.trim();
+    }
+
+    function createAddForm(placeholder, buttonText, onAdd, maxLength = 100) {
+      const form = element("form", "add-form");
+      const input = element("input");
+      input.type = "text";
+      input.placeholder = placeholder;
+      input.setAttribute("aria-label", placeholder);
+      input.maxLength = maxLength;
+      input.required = true;
+      const submit = element("button", "primary-button", buttonText);
+      submit.type = "submit";
+      form.append(input, submit);
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const value = input.value.trim();
+        if (value) onAdd(value);
+      });
+      return form;
+    }
+
+    function render() {
+      renderNavigation();
+      app.replaceChildren();
+      status.textContent = "";
+      if (currentPage === "agenda") {
+        renderAgendaPage();
+        return;
+      }
+      const subjectData = getSubjectData(selected.grade, selected.subject);
+      renderDashboard(subjectData);
+      const workspace = element("div", "workspace");
+      const mainColumn = element("div", "main-column");
+      mainColumn.append(renderResources(subjectData), renderTopics(subjectData));
+      workspace.append(mainColumn);
+      app.append(workspace);
+    }
+
+    initializeSyllabus();
+    render();
+  </script>
+</body>
+</html>
